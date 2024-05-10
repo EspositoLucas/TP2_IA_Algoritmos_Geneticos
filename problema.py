@@ -36,25 +36,23 @@ def calcular_condiciones_a_cumplir(ind):
         return puntos  # Retornar 0 si el tamaño es incorrecto
 
     # No repetir valores en los genes
-    valores_unicos = set(ind)
-    puntos += (CANT_DISFRACES * TAM_DISFRAZ - len(valores_unicos)) * 5
-
-    # El pirata no es rojo
-    if not (ind[PERSONAJES.PIRATA * TAM_DISFRAZ] == AMIGOS.LUCIA - 1 and ind[PERSONAJES.PIRATA * TAM_DISFRAZ + POS_COLOR] == COLORES.ROJO - 1):
+    repite = False
+    for i in range(CANT_DISFRACES):
+        for j in range(CANT_DISFRACES):
+            if i!=j:
+                if (ind[i * TAM_DISFRAZ] == ind[j * TAM_DISFRAZ] or ind[i * TAM_DISFRAZ + POS_AMIGO] == ind[j * TAM_DISFRAZ + POS_AMIGO] or ind[i * TAM_DISFRAZ + POS_COLOR] == ind[j * TAM_DISFRAZ + POS_COLOR]):
+                    repite = True
+    if(not repite):
         puntos += 5
 
-    # Mario no es hombre lobo ni negro
-    if not (ind[PERSONAJES.HOMBRE_LOBO * TAM_DISFRAZ] == AMIGOS.MARIO - 1 or ind[PERSONAJES.HOMBRE_LOBO * TAM_DISFRAZ + POS_COLOR] == COLORES.NEGRO - 1):
+    # El disfraz de bruja era de color verde.
+    if ind[PERSONAJES.BRUJA * TAM_DISFRAZ + POS_COLOR] == COLORES.VERDE - 1:
         puntos += 5
 
-    # # La bruja es verde
-    # if ind[PERSONAJES.BRUJA * TAM_DISFRAZ + POS_COLOR] == COLORES.VERDE - 1:
-    #     puntos += 5
-
-    # El vampiro es negro
+    # El disfraz de vampiro era de color negro.
     if ind[PERSONAJES.VAMPIRO * TAM_DISFRAZ + POS_COLOR] == COLORES.NEGRO - 1:
         puntos += 5
-
+    
     return puntos
 
 
@@ -62,20 +60,29 @@ def calcular_condiciones_a_cumplir(ind):
 def calcular_restricciones(ind):
     puntos = 0
 
-    # Lucía tiene el pirata o el rojo
-    if not (ind[PERSONAJES.PIRATA * TAM_DISFRAZ] == AMIGOS.LUCIA - 1 or ind[PERSONAJES.PIRATA * TAM_DISFRAZ + POS_COLOR] == COLORES.ROJO - 1):
+    # El disfraz de pirata no era de color rojo 
+    if (ind[PERSONAJES.PIRATA * TAM_DISFRAZ + POS_COLOR] == COLORES.ROJO - 1):
         puntos -= 3
 
-    # Mario tiene el hombre lobo o el negro
-    if not (ind[PERSONAJES.HOMBRE_LOBO * TAM_DISFRAZ] == AMIGOS.MARIO - 1 or ind[PERSONAJES.HOMBRE_LOBO * TAM_DISFRAZ + POS_COLOR] == COLORES.NEGRO - 1):
+    # El disfraz de pirata no lo usaba Lucía.
+    if (ind[PERSONAJES.PIRATA * TAM_DISFRAZ] == AMIGOS.LUCIA - 1):
         puntos -= 3
 
-    # # Pedro tiene la bruja o el verde
-    # if not (ind[PERSONAJES.BRUJA * TAM_DISFRAZ] == AMIGOS.PEDRO - 1 or ind[PERSONAJES.BRUJA * TAM_DISFRAZ + POS_COLOR] == COLORES.VERDE - 1):
-    #     puntos -= 3
+    # Mario no se disfrazó de hombre lobo.
+    if (ind[PERSONAJES.HOMBRE_LOBO * TAM_DISFRAZ] == AMIGOS.MARIO - 1):
+        puntos -= 3
 
-    # Lucía tiene el vampiro o el negro
-    if not (ind[PERSONAJES.VAMPIRO * TAM_DISFRAZ] == AMIGOS.LUCIA - 1 or ind[PERSONAJES.VAMPIRO * TAM_DISFRAZ + POS_COLOR] == COLORES.NEGRO - 1):
+    # Mario no usó un disfraz negro.
+    for i in range(CANT_DISFRACES):
+        if (ind[i * TAM_DISFRAZ + POS_AMIGO] == AMIGOS.MARIO -1 and ind[i * TAM_DISFRAZ + POS_COLOR] == COLORES.NEGRO - 1):
+            puntos -= 3
+
+    # El disfraz de bruja no lo usaba Pedro.
+    if (ind[PERSONAJES.BRUJA * TAM_DISFRAZ] == AMIGOS.PEDRO - 1):
+        puntos -= 3
+
+    # El disfraz de vampiro no lo usaba Lucía.
+    if (ind[PERSONAJES.VAMPIRO * TAM_DISFRAZ] == AMIGOS.LUCIA - 1):
         puntos -= 3
 
     return puntos
